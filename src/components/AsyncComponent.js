@@ -1,5 +1,27 @@
 import React, { Component } from "react";
 
-import Page1 from "./Page1";
-import Page2 from "./Page2";
-import Page3 from "./Page3";
+export default function asyncComponent(importComponent) {
+    class AsyncComponent extends Component {
+        constructor(props) {
+            super(props);
+            this.state = {
+                component: null
+            };
+        }
+
+        async componentDidMount() {
+            // Destructuring default prop. for component
+            const { default: component } = await importComponent();
+            this.setState({
+                component: component.default
+            });
+        }
+
+        render() {
+            const Component = this.state.component;
+            return Component ? <Component {...this.props} /> : null;
+        }
+    }
+
+    return AsyncComponent;
+}
